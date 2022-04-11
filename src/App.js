@@ -150,7 +150,7 @@ class App extends React.Component{
                 this.setState(oldState => ({
                     typed_text : new_ttext, 
                     typed_count : oldState.typed_count + 1,
-                    score_count : oldState.typed_count + 1,
+                    score_count : oldState.score_count + 1,
                     typed_word : '',
                     wrong_count: (oldState.displayed_text[oldState.typed_count] === new_tword.trim()) 
                         ? oldState.wrong_count : oldState.wrong_count + 1,
