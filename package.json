@@ -1,7 +1,7 @@
 {
   "name": "trainer",
   "version": "0.1.0",
-  "homepage": "https://IonianIronist.github.io/react-gh-pages",
+  "homepage": "https://ionianironist.github.io/react-gh-pages",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.9.0",
