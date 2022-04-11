@@ -64,7 +64,7 @@ class App extends React.Component{
             typed_word : '',
             typed_count : 0,
             wrong_count : 0,
-            timer : 6,
+            timer : 60,
             started: false,
             finished: false,
             seen_count: 0,
