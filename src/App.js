@@ -2,13 +2,12 @@ import React from 'react'
 import {
     Box, Typography, TextField, Button, List, ListItem, ListItemButton, ListItemText
 } from '@mui/material'
-
 import './App.css'
 
 
 function TextPrompt(props){
     return(
-        <Box className="promptbox">
+        <Box sx={{margin:"1ch"}}>
             {
                 props.typed_text
                     .map((word, i) => 
@@ -69,10 +68,12 @@ class App extends React.Component{
             finished: false,
             seen_count: 0,
             score_count : 0,
+            feed : [],
         }
         this.updateTypedWord = this.updateTypedWord.bind(this);
         this.updateTimer = this.updateTimer.bind(this);
         this.resetTest = this.resetTest.bind(this);
+        this.getNextText = this.getNextText.bind(this);
     }
     
     componentDidMount(){
@@ -118,7 +119,7 @@ class App extends React.Component{
             this.setState(oldState => ({
                 started: false, 
                 finished: true,
-                seen_count: oldState.seen_count + 1
+                seen_count: (oldState.seen_count + 1 < oldState.feed.length) ? oldState.seen_count + 1 : 0
                 })
             );
     }
@@ -133,6 +134,10 @@ class App extends React.Component{
             this.setState({typed_word: new_tword});
         }
         else{
+            if(new_tword.length === 1){
+                this.setState({typed_word: ''});
+                return;
+            }
             let new_ttext = this.state.typed_text.concat([new_tword.trim()]);
             if (new_ttext.length === this.state.displayed_text.length){
                 this.setState(oldState => ({
@@ -142,7 +147,7 @@ class App extends React.Component{
                     typed_word : '',
                     wrong_count: (oldState.displayed_text[oldState.typed_count] === new_tword.trim()) 
                         ? oldState.wrong_count : oldState.wrong_count + 1,
-                    seen_count: oldState.seen_count + 1,
+                    seen_count: (oldState.seen_count + 1 < oldState.feed.length) ? oldState.seen_count + 1 : 0,
                     displayed_text: oldState.feed[oldState.seen_count + 1]['description'].split(' ')
                 }))
             }
@@ -158,6 +163,13 @@ class App extends React.Component{
             }
         }
     }
+    
+    getNextText(){
+        this.setState(oldState =>({
+            displayed_text: (oldState.seen_count + 1 < oldState.feed.length)? oldState.feed[oldState.seen_count + 1]['description'].split(' ') : oldState.feed[0]['description'].split(' '),
+            seen_count: (oldState.seen_count + 1 < oldState.feed.length)? oldState.seen_count+1 : 0,
+        }))
+    }
 
     render(){
         return (
@@ -167,6 +179,12 @@ class App extends React.Component{
                 alignItems="center"
                 flexDirection="column"
             >
+                <Box display="flex">
+                    
+                    <Typography variant='h3'>
+                        TypeTrainer
+                    </Typography>
+                </Box>
                 {
                 !this.state.finished &&
                 <Box
@@ -174,18 +192,18 @@ class App extends React.Component{
                     justifyContent="center"
                     alignItems="center"
                     flexDirection="column"
+                    sx={{minWidth: 0.75, maxWidth: 0.75, height:1}}
                 >
-                    <Typography variant='h3'>
-                        TypeTrainer
-                    </Typography>
+                    <Box className="promptbox" sx={{minHeight:"6ch",maxHeight:"50%" , width:0.75, minWidth:0.75, fontSize:"1.8rem", textAlign: "center"}}>
                     <TextPrompt 
                         displayed_text={this.state.displayed_text} 
                         typed_text={this.state.typed_text}
                         typed_word={this.state.typed_word}
                         typed_count={this.state.typed_count}
                     />
+                    </Box>
                     <Box>
-                        <TextField variant='outlined' style={{margin: '1rem'}} value={this.state.typed_word} onChange={this.updateTypedWord}/>
+                        <TextField variant='outlined' InputProps={{className: "input-field"}} value={this.state.typed_word} onChange={this.updateTypedWord}/>
                     </Box>
                     <Typography>Time: {this.state.timer}</Typography>
                 </Box>
@@ -197,7 +215,7 @@ class App extends React.Component{
                         flexDirection="column"
                         justifyContent="center"
                         alignItems="center"
-                        minHeight="100vh" 
+                        minHeight="60vh" 
                         >
                         <Typography>WPM: {this.state.score_count}</Typography>
                         <Typography>Mistakes: {this.state.wrong_count}</Typography>
@@ -216,7 +234,18 @@ class App extends React.Component{
                         </List>
                     </Box>
                 }
+                {
+                    !(this.state.started || this.state.finished) &&
+                    <Button 
+                        variant='outlined' 
+                        size='small' 
+                        onClick={this.getNextText}
+                    >
+                        Another Text
+                    </Button>
+                }
             </Box>
+
         );
     }
 }

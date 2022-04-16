@@ -6,8 +6,6 @@ body {
 }
 
 .promptbox{
-    width: 80%;
-    height: 15%;
     border: 1px dotted var(--nord4);
 }
 
@@ -16,6 +14,14 @@ body {
     margin: 1ch !important;
     overflow: hidden;
 
+}
+
+ .input-field{
+    margin: 1.5rem;
+}
+
+.input-field > input {
+    color: var(--nord10);
 }
 
 .ok{
